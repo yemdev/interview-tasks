@@ -1,5 +1,7 @@
 # Charts
 
+Start with cloning `https://github.com/HexagonTech/interview-tasks.git` project; you will be working only with `b2c/charts` subdirectory during this task.
+
 ## Server
 Already implemented, see `server.js` (Node.js used as a platform). Initially generates an array (one-dimensional) of random integer numbers. Every X milliseconds the first element of the array is shifted away and the new random integer number is pushed to the end of the array. There is also a HTTP-server running, which is responsible for:
 
@@ -15,6 +17,8 @@ This part should be implemented by you (you can put markup to `public/index.html
 ![Chart example](https://raw.githubusercontent.com/HexagonTech/interview-tasks/master/img/charts.png)
 
 You can use any JS framework/libraries you are familiar with.
+
+When you're done, create a new Git branch, commit your changes to this branch and push this branch to the repository.
 
 ## Bonus task
 As an optional bonus task, modify the server so it will maintain N different arrays, each of which should be available to the client via different HTTP-request (this might sound strange and ineffective, but let’s pretend that we’re modelling some external API here, which we don't have access to). Client should make requests in an arbitrary order and display/redraw N different graphs accordingly. On each update cycle redrawing should be performed only after all HTTP-requests have finished.
