@@ -10,7 +10,7 @@ Already implemented, see `server.js` (Node.js used as a platform). Initially gen
 To run the server, type `node ./server` inside the project directory.
 
 ## Client
-This part should be implemented by you. Initially, the client should retrieve the server config (see `/api/v1/config` above). After that, every X milliseconds the client should receive the data (one-dimensional array) from the server (see `/api/v1/points` above). Received data should be drawn on a canvas of an arbitrary size in a format of a graph, where the value of a point is represented by an Y-axis (and scaled accordingly around the center horizontal line of the canvas) and the point sequential number is represented by an X-axis. Points should be connected by lines in the order of a sequence. See a screenshot as an example (canvas size / colors might be chosen arbitrary):
+This part should be implemented by you (you can put markup to `public/index.html` and code to `public/client.js`, but it is completely up to you). Initially, the client should retrieve the server config (see `/api/v1/config` above). After that, every X milliseconds the client should receive the data (one-dimensional array) from the server (see `/api/v1/points` above). Received data should be drawn on a canvas of an arbitrary size in a format of a graph, where the value of a point is represented by an Y-axis (and scaled accordingly around the center horizontal line of the canvas) and the point sequential number is represented by an X-axis. Points should be connected by lines in the order of a sequence. See a screenshot as an example (canvas size / colors might be chosen arbitrary):
 
 ![Chart example](https://raw.githubusercontent.com/HexagonTech/interview-tasks/master/img/charts.png)
 
