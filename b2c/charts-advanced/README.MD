@@ -77,6 +77,8 @@ Server serves static contents from a `public` subdirectory, so you could put the
 implemented using React library.
 
 ## Bonus task
-As both server teams already left the team (and Solar system), it would be good if some good Samaritan adjusted the server
-in a way so it would use some modern technologies so client will no longer be forced to send a whole bunch of requests
+_(Only after completing the base task)_
+
+As both server teams already left the project (and Solar system), it would be good if some good Samaritan adjusted the server
+in a way so it would use some modern technologies so clients will no longer be forced to send a whole bunch of requests
 all the time.
