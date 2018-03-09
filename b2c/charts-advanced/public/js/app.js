@@ -1,5 +1,17 @@
 (() => {
 
+    let socket = new WebSocket("ws://127.0.0.1:8080");
+
+    socket.onmessage = function(event) {
+        let e = JSON.parse(event.data);
+        let eventName = e.event;
+        let data = e.data || null;
+        let message = e.message || null;
+
+        eventName === 'data_updated' && onDataUpdated(data);
+        eventName === 'state_offline' && onOffline(message, data);
+    };
+
     let dataSource = {};
     let clientKey = null;
 
@@ -191,31 +203,38 @@
     }
 
     /**
+     * on Data Updated
+     */
+    function onDataUpdated (data) {
+        let station = dataSource.stations[data.stationName];
+
+        station.enabled = true;
+            
+        station.time = data.time;
+        station.points.splice(0, data.delta.length);
+        station.points = station.points.concat(data.delta);
+    }
+
+    /**
+     * on Offline
+     */
+    function onOffline (message, data) {
+        let station = dataSource.stations[data.stationName];
+        station.enabled = false;
+    }
+
+    /**
      * Update Station Data
      */
-    async function updateStationData (station) {
-        let msgs = {
-            offline: 'Will be back after lunch.'
-        };
-
-        let data = await fetch(`/api/v1/client/${clientKey}/delta/${station.canvas.name}/since/${station.time}`)
-                .then(response => response.ok ? response.json() : response.text())
-                .then(data => data)
-                .catch(err => err.message);
-        
-        // Display Stattion Offline State
-        if (data === msgs.offline) {
-            station.enabled = false;
-        }
-                
-        // Update Points
-        else if (!data.error && data.time && data.delta) {
-            station.enabled = true;
-            
-            station.time = data.time;
-            station.points.splice(0, data.delta.length);
-            station.points = station.points.concat(data.delta);
-        }
+    function updateStationData (station) {        
+        socket.send(JSON.stringify({
+            event: 'request_for_updates', 
+            data: {
+                clientKey: clientKey, 
+                stationName: station.canvas.name, 
+                time: station.time
+            }
+        }));
 
         // Redraw
         drawChart(station);

@@ -2,6 +2,11 @@ const _ = require('lodash');
 const crypto = require('crypto');
 const express = require('express');
 const app = express();
+const WebSocket = require('ws');
+const http = require('http');
+
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 
 const generateBlocks = require('./blocks');
 
@@ -91,6 +96,57 @@ app.get('/api/v1/client/:clientKey/delta/:stationName/since/:time', function (re
 	});
 });
 
-app.listen(SERVER_CONFIG.PORT, function () {
+wss.on('connection', function connection (ws, req) {
+   
+	ws.on('message', function incoming (message) {
+		let e = JSON.parse(message);
+        let eventName = e.event;
+		let data = e.data;
+
+		const clientKey = data.clientKey;
+		const client = clients[clientKey];
+		const blockKey = data.stationName;
+		const time = data.time;
+		let delta = null;
+
+		if (requestShouldFail()) {
+			ws.send(JSON.stringify({event: 'state_offline', message: 'Will be back after lunch.', data: { stationName: blockKey }}));
+			return;
+		}
+
+		
+		if (!clientKey) {
+			ws.send(JSON.stringify({event: 'error', message: 'Client key cannot be empty.'}));
+			return;
+		}
+		
+		if (!client) {
+			ws.send(JSON.stringify({event: 'error', message: `Client key "${clientKey}" not found.`}));
+			return;
+		}
+
+		client.lastAccessTime = Date.now();
+		if (!blockKey) {
+			ws.send(JSON.stringify({event: 'error', message: 'Station name cannot be empty.'}));
+			return;
+		}
+
+		if (!time) {
+			ws.send(JSON.stringify({event: 'error', message: 'Time since latest update cannot be empty.'}));
+			return;
+		}
+
+		try {
+			delta = client.blocks.getDelta(blockKey, time);
+		} catch (error) {
+			ws.send(JSON.stringify({event: 'error', message: error.message}));
+			return;
+		}
+
+		ws.send(JSON.stringify({event: 'data_updated', data: { stationName: blockKey, time: client.lastAccessTime, ...delta }}));
+	});
+});
+
+server.listen(SERVER_CONFIG.PORT, function () {
 	console.log(`listening on port ${SERVER_CONFIG.PORT}`);
 });
