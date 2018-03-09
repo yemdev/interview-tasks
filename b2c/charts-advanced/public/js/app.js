@@ -124,6 +124,7 @@
             }
 
             // Draw Y Axis Values
+
         }
     }
 
@@ -317,9 +318,9 @@
 
         for (let i = 0, l = stationsKeys.length; i < l; i++) {
             
-            if (!dataSource.stations[key].filterEnabled) continue;
-
             let key = stationsKeys[i];
+            if (!dataSource.stations[key].filterEnabled) continue;
+            
             let isMatch = value != '' ? !!key.toLowerCase().match(value.toLowerCase()) : true;
 
             dataSource.stations[key].visible = isMatch;
