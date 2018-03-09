@@ -37,6 +37,13 @@
     }
 
     /**
+     * Get Y Axis Step Length
+     */
+    function getYStepLength (station) {
+        return (station.canvas.yMax - station.canvas.margin) / station.points.length;
+    }
+
+    /**
      * Draw Line
      */
     function drawLine (station, fromX, fromY, toX, toY, color, lineWidth) {
@@ -55,7 +62,8 @@
      */
     function drawSerie (station) {
 
-        let stepLength = getXStepLength(station);
+        let xStepLength = getXStepLength(station);
+        let yStepLength = getYStepLength(station);
         let stepLine = { fromX: station.canvas.xMin, fromY: station.canvas.yMid, toX: 0, toY: station.canvas.yMid };
 
         for (let i = 0, l = station.points.length; i < l; i++) {
@@ -63,12 +71,12 @@
 
             // Define destination
             stepLine.toY = station.canvas.yMid - point;
-            stepLine.toX = stepLine.fromX + stepLength;
+            stepLine.toX = stepLine.fromX + xStepLength;
             
             drawLine(station, stepLine.fromX, stepLine.fromY, stepLine.toX, stepLine.toY, station.canvas.color, 0.7);
             
             // Increase Step
-            stepLine.fromX += stepLength;
+            stepLine.fromX += xStepLength;
             stepLine.fromY = stepLine.toY;
         }
     }
@@ -80,14 +88,16 @@
 
         let stationsNames = Object.keys(dataSource.stations);
         let points = station.points;
-        let stepLength = getXStepLength(station);
+        let xStepLength = getXStepLength(station);
+        let yStepLength = getYStepLength(station);
 
         let { xMin, yMin, xMid, yMid, xMax, yMax, ctx, name } = station.canvas;
 
         let vLine = { fromX: xMin, fromY: yMin, toX: xMin, toY: yMax };
         let hMidLine = { fromX: xMin, fromY: yMid, toX: xMax, toY: yMid };
         let hLine = { fromX: xMin, fromY: yMax, toX: xMax, toY: yMax };
-        let shortStepLine = { fromX: xMin + stepLength, fromY: yMax, toX: xMin + stepLength, toY: yMax + 10 };
+        let shortXStepLine = { fromX: xMin + xStepLength, fromY: yMax, toX: xMin + xStepLength, toY: yMax + 10 };
+        let shortYStepLine = { fromX: xMin, fromY: yMin, toX: xMin - 10, toY: yMin };
 
         // Draw Station Name
         ctx.beginPath();
@@ -118,13 +128,18 @@
 
             // Draw X Axis Steps Lines
             for (let i = 0, l = points.length; i < l; i++) {
-                drawLine(station, shortStepLine.fromX, shortStepLine.fromY , shortStepLine.toX, shortStepLine.toY, 'gray', 0.5);
-                shortStepLine.fromX += stepLength;
-                shortStepLine.toX += stepLength;
+                drawLine(station, shortXStepLine.fromX, shortXStepLine.fromY , shortXStepLine.toX, shortXStepLine.toY, 'gray', 0.5);
+                shortXStepLine.fromX += xStepLength;
+                shortXStepLine.toX += xStepLength;
             }
 
             // Draw Y Axis Values
-
+            for (let i = 0, l = points.length/4; i < l; i++) {
+                drawLine(station, shortYStepLine.fromX, shortYStepLine.fromY , shortYStepLine.toX, shortYStepLine.toY, 'gray', 0.5);
+                shortYStepLine.fromY += yStepLength*4;
+                shortYStepLine.toY += yStepLength*4;
+            }
+            
         }
     }
 
