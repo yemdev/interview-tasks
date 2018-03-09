@@ -1,0 +1,139 @@
+html, body { overflow: hidden; height: 100%; margin: 0; padding: 0; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 14px; }
+* { box-sizing: border-box; }
+/* Reset */
+ul { list-style-type: none; }
+ul li { margin: 0; padding: 0; }
+input { outline: none; }
+
+canvas {
+    background-color: #f1f1f1;
+}
+
+.graphs-container {
+    width: 100%; 
+    height: calc(100% - 100px); overflow-y: auto;
+    margin-left: 12px;
+    text-align: center;
+}
+
+.graphs-container canvas {
+    display: inline-block;
+    margin: 12px;
+}
+
+.graphs-container canvas[enabled="false"], .graphs-container canvas[visible="false"] {
+    display: none;
+}
+
+/* reInit Client Button */
+.re-init-client-btn {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.re-init-client-btn:hover {
+    opacity: 1;
+}
+
+/* Inline List */
+.inline-list {
+    display: flex;
+    justify-content: flex-end;
+    font-family: Verdana;
+    font-size: 12px;
+}
+
+.inline-list li {
+    margin: 0 12px;
+    cursor: pointer;
+    color: gray;
+    user-select: none;
+}
+
+.inline-list li:hover { color: #333; }
+.inline-list li.selected { color: #333; font-weight: bold; }
+
+.inline-list li > span {
+    
+}
+
+/* Filter */
+.filter {
+    display: inline-block;
+    position: relative;
+}
+
+.filter > span {
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 14px;
+}
+
+.filter > span:after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    line-height: 14px;
+    vertical-align: middle;
+    position: relative;
+    top: 3px;
+    left: 12px;
+    border: 7px solid transparent;
+    border-top: 7px solid gray;
+    zoom: 0.9;
+}
+
+/* Filter Drop Down */
+.filter > .drop-down {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: -12px;
+    white-space: nowrap;
+}
+
+.filter:hover > .drop-down {
+    display: block;
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.5);
+    padding: 12px 0;
+    background: #f1f1f1;
+
+    max-height: 400px;
+    overflow: auto;
+}
+
+.filter:hover > .drop-down > div {
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+}
+
+.filter:hover > .drop-down > div:hover {
+    background: lightblue;
+}
+
+.filter:hover > .drop-down > div > span {
+    margin-right: 24px;
+}
+
+.filter:hover > .drop-down > div > input {
+    zoom: 1.2;
+    margin: 0 0 0 12px;
+}
+
+/* Search */
+.search-inp {
+    border: none;
+    border-bottom: 1px solid gray;
+    margin: 12px;
+    min-width: 250px;
+}
+
+
+/* Init Button */
+.re-init-client-btn {
+    margin: 12px;
+}

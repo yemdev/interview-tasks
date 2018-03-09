@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Charts Advanced</title>
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+	<div style="width: 1600px; margin: 0 auto; height: 100%;">
+
+		<div style="text-align: right; margin: 12px auto; width: 1600px; display: flex; align-items: center; justify-content: space-between;">
+			
+			<!-- Search -->
+			<div style="display: inline-block; margin-left: 24px;">
+				<input id="search-inp" class="search-inp" type="text" placeholder="Search">
+			</div>
+
+			<div>
+				<!-- Filter -->
+				<div id="filter" class="filter">
+					<span>Filter Stations</span>
+					<div class="drop-down"></div>
+				</div>
+
+				<!-- Sorting -->
+				<div style="display: none; margin-left: 48px;">
+					<span>Sort</span>
+					<span style="font-size: 11px;">( asc )</span>
+					<span style="font-size: 11px; display: none;">( desc )</span>
+				</div>
+
+			</div>
+
+			<img id="init-btn" class="re-init-client-btn" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAAAwUlEQVR4Aa3QMWoCQRjH0deEVQg5g3VAN0QPKFilUgiym9t4C5EQ0niIXQL7pbBJ2K/YAd+0/x/MjHvZls6jdB6l89C7aNTTg9sZtGbTksraXiec8oSn5NFLV6GRePVtkXzrSm/I3vIh7GQOwtHIp/AisxHORn6EB5m50BnphUqmEnojF2FdcqVG2Mu8Ce9GaoPOMvnYhS/PEq1wtQLEn+RRauYkdA425uJfgjxpDeJ2piXUjs666QGgdK50ztZ9/AKaRlprB9qp9gAAAABJRU5ErkJggg==" alt="">
+		</div>
+		
+		<!-- Graphs Container -->
+		<div id="graphs-container" class="graphs-container"></div>
+	</div>
+
+	<!-- App -->
+	<script src="js/app.js"></script>
+</body>
+</html>
