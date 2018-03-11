@@ -15,7 +15,8 @@ class App extends React.Component {
         this.state = {
             inited: false,
             clientKey: null,
-            stationsKeys: []
+            stationsKeys: [],
+            search: ''
         };
 
         this.initClient();
@@ -70,6 +71,11 @@ class App extends React.Component {
         });
     }
 
+    search (e) {
+        let searchTerm = e.target.value;
+        this.setState({search: searchTerm});
+    }
+
     render () {
         
         // Loading... view
@@ -79,17 +85,25 @@ class App extends React.Component {
 
         // App view
         else {
+
+            let stationsKeys = !!this.state.search ? this.state.stationsKeys.filter(key => {
+                let match = this.state.search != '' ? !!key.toLowerCase().match(this.state.search.toLowerCase()) : true;
+                return match;
+            }) : this.state.stationsKeys;
+
+            let stations = stationsKeys.map(i => this.stations[i]);
+
             return <div className="main-viewport">
             
                 {/* Toolbar */}
                 <div className="toolbar">
-                    <Search />
+                    <Search onInpChange={this.search.bind(this)} />
                     <Filter />
                     <Refresh onRefresh={this.reInitClient.bind(this)} />
                 </div>
             
                 {/* Stations */}
-                <Stations stations={this.stations} stationsKeys={this.state.stationsKeys} />
+                <Stations stations={stations} />
             </div>;
         }
     }

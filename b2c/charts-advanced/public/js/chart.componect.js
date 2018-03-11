@@ -6,9 +6,10 @@ export class Chart extends React.Component {
     constructor (props) {
         super(props);
 
-        this.points = [];
+        this.points = props.points;
         this.online = true;
         this.time = props.time;
+        this.timer = null;
         this.serieColor = this.getRndColor();
         
         // Subscribe for socket events
@@ -19,7 +20,7 @@ export class Chart extends React.Component {
     requestUpdate () {
         let delay = 100;
 
-        setTimeout(() => {
+        this.timer = setTimeout(() => {
             socket.send({
                 event: 'request_for_updates',
                 data: {
@@ -179,11 +180,12 @@ export class Chart extends React.Component {
     }
 
     componentDidMount() {
-        this.points = this.props.points;
-        this.points && this.updateCanvas();
+        this.updateCanvas();
     }
 
     componentWillUnmount () {
+        this.timer = clearTimeout(this.timer);
+        
         // unSubscribe for socket events
         socket.off(`${this.props.name}_updated`);
         socket.off(`${this.props.name}_offline`);

@@ -6,9 +6,9 @@ export class Stations extends React.Component {
     
     render () {        
         return <div className="stations">
-            {this.props.stationsKeys.map((key, index) => {
+            {this.props.stations.map((item, index) => {
                 return (
-                    <Station key={index} name={key} data={this.props.stations[key]} />
+                    <Station key={item.name} name={item.name} data={item} />
                 );
             })}
         </div>;
