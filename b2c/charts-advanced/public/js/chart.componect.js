@@ -1,7 +1,39 @@
+import * as socket from './websocket.js';
+
 /* Chart */
 export class Chart extends React.Component {
 
+    constructor (props) {
+        super(props);
+
+        this.points = [];
+        this.online = true;
+        
+        // Subscribe for socket events
+        socket.on(`${props.name}_updated`, this.onDataUpdated.bind(this));
+        socket.on(`${props.name}_offline`, this.onOffline.bind(this));
+    }
+
+    onDataUpdated (data) {
+        !this.online && (this.online = true);
+        
+        this.points.splice(0, data.delta.length);
+        this.points = this.points.concat(data.delta);
+        
+        this.updateCanvas();
+    }
+
+    onOffline (data) {
+        this.online = false;
+        this.updateCanvas();//debugger;
+    }
+
     componentDidMount() {
+        this.points = this.props.points;
+        this.points && this.updateCanvas();
+    }
+
+    componentWillReceiveProps () {
         this.updateCanvas();
     }
 
@@ -14,9 +46,16 @@ export class Chart extends React.Component {
     }
 
     updateCanvas() {
-        let canvas = this.refs.canvas;
-        let ctx = canvas.getContext('2d');
 
+        let points = this.points;
+
+        let canvas = this.refs.canvas;
+        
+        // Set canvas width and height
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+
+        let ctx = canvas.getContext('2d');
         let width = canvas.width;
         let height = canvas.height;
 
@@ -33,8 +72,8 @@ export class Chart extends React.Component {
         let xMid = width / 2;
         let yMid = height / 2;
 
-        let xStepLength = this.getXStepLength(xMax, margin, this.props.points.length);
-        let yStepLength = this.getYStepLength(yMax, margin, this.props.points.length);
+        let xStepLength = this.getXStepLength(xMax, margin, points.length);
+        let yStepLength = this.getYStepLength(yMax, margin, points.length);
 
         let vLine = { fromX: xMin, fromY: yMin, toX: xMin, toY: yMax };
         let hMidLine = { fromX: xMin, fromY: yMid, toX: xMax, toY: yMid };
@@ -49,16 +88,17 @@ export class Chart extends React.Component {
         ctx.fillText(this.props.name, xMid, yMin - 24);
         ctx.stroke();
 
-        // Station Disabled
-        if (!this.props.enabled) {
+        // Station Offline
+        if (!this.online) {
             ctx.beginPath();
+
             // Display Offline State Message
             ctx.font = '21px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('STATION IS NOW OFFLINE', xMid, yMid);
             ctx.stroke();
         
-        // Station Enabled
+        // Station Online
         } else {
             // Draw Left Vertical Line
             this.drawLine(ctx, vLine.fromX, vLine.fromY , vLine.toX, vLine.toY);
@@ -70,14 +110,14 @@ export class Chart extends React.Component {
             this.drawLine(ctx, hLine.fromX, hLine.fromY , hLine.toX, hLine.toY);
 
             // Draw X Axis Steps Lines
-            for (let i = 0, l = this.props.points.length; i < l; i++) {
+            for (let i = 0, l = this.points.length; i < l; i++) {
                 this.drawLine(ctx, shortXStepLine.fromX, shortXStepLine.fromY , shortXStepLine.toX, shortXStepLine.toY, 'gray', 0.5);
                 shortXStepLine.fromX += xStepLength;
                 shortXStepLine.toX += xStepLength;
             }
 
             // Draw Y Axis Values
-            for (let i = 0, l = this.props.points.length/4; i < l; i++) {
+            for (let i = 0, l = this.points.length/4; i < l; i++) {
                 this.drawLine(ctx, shortYStepLine.fromX, shortYStepLine.fromY , shortYStepLine.toX, shortYStepLine.toY, 'gray', 0.5);
                 shortYStepLine.fromY += yStepLength*4;
                 shortYStepLine.toY += yStepLength*4;
@@ -85,8 +125,8 @@ export class Chart extends React.Component {
 
             // Draw Serie
             let stepLine = { fromX: xMin, fromY: yMid, toX: 0, toY: yMid };
-            for (let i = 0, l = this.props.points.length; i < l; i++) {
-                let point = this.props.points[i];
+            for (let i = 0, l = this.points.length; i < l; i++) {
+                let point = this.points[i];
     
                 // Define destination
                 stepLine.toY = yMid - point;
@@ -134,11 +174,9 @@ export class Chart extends React.Component {
         ctx.stroke();
     }
 
-    render () {
-        let { name, points } = this.props;
-
+    render () {        
         return <div className="chart-container">
-            <canvas ref="canvas" width="750px" height="300px" />
+            <canvas ref="canvas" />
         </div>;
     }
 }

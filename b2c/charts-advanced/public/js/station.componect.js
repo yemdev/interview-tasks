@@ -4,10 +4,10 @@ import { Chart } from './chart.componect.js';
 export class Station extends React.Component {
 
     render () {
-        let { name, points, enabled } = this.props.data;
+        let { points, enabled, name, online } = this.props.data;
             
         return <div className="station">
-            <Chart name={name} points={points} enabled={enabled} />
+            <Chart name={name} points={points} online={online} />
         </div>;
     }
 }
