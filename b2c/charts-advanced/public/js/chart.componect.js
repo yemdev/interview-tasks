@@ -8,10 +8,26 @@ export class Chart extends React.Component {
 
         this.points = [];
         this.online = true;
+        this.time = props.time;
         
         // Subscribe for socket events
         socket.on(`${props.name}_updated`, this.onDataUpdated.bind(this));
         socket.on(`${props.name}_offline`, this.onOffline.bind(this));
+    }
+
+    requestUpdate () {
+        let delay = 100;
+
+        setTimeout(() => {
+            socket.send({
+                event: 'request_for_updates',
+                data: {
+                    clientKey: this.props.clientKey,
+                    stationName: this.props.name,
+                    time: this.time
+                }
+            });
+        }, delay);
     }
 
     onDataUpdated (data) {
@@ -19,21 +35,14 @@ export class Chart extends React.Component {
         
         this.points.splice(0, data.delta.length);
         this.points = this.points.concat(data.delta);
+
+        this.time = data.time;
         
         this.updateCanvas();
     }
 
     onOffline (data) {
         this.online = false;
-        this.updateCanvas();
-    }
-
-    componentDidMount() {
-        this.points = this.props.points;
-        this.points && this.updateCanvas();
-    }
-
-    componentWillReceiveProps () {
         this.updateCanvas();
     }
 
@@ -61,6 +70,8 @@ export class Chart extends React.Component {
         let ctx = canvas.getContext('2d');
         let width = canvas.width;
         let height = canvas.height;
+
+        ctx.clearRect(0, 0, width, height);
 
         // Canvas Margin
         let margin = 48;
@@ -127,7 +138,7 @@ export class Chart extends React.Component {
             }
 
             // Draw Serie
-            let stepLine = { fromX: xMin, fromY: yMid, toX: 0, toY: yMid };
+            let stepLine = { fromX: xMin, fromY: yMid, toX: xStepLength, toY: yMid };
             for (let i = 0, l = this.points.length; i < l; i++) {
                 let point = this.points[i];
     
@@ -142,28 +153,8 @@ export class Chart extends React.Component {
                 stepLine.fromY = stepLine.toY;
             }
         }
-    }
 
-    /**
-     * Draw Serie
-     */
-    drawSerie (ctx, points, xStepLength, yStepLength) {
-
-        let stepLine = { fromX: station.canvas.xMin, fromY: station.canvas.yMid, toX: 0, toY: station.canvas.yMid };
-
-        for (let i = 0, l = station.points.length; i < l; i++) {
-            let point = station.points[i];
-
-            // Define destination
-            stepLine.toY = station.canvas.yMid - point;
-            stepLine.toX = stepLine.fromX + xStepLength;
-            
-            drawLine(station, stepLine.fromX, stepLine.fromY, stepLine.toX, stepLine.toY, station.canvas.color, 0.7);
-            
-            // Increase Step
-            stepLine.fromX += xStepLength;
-            stepLine.fromY = stepLine.toY;
-        }
+        this.requestUpdate();
     }
 
     drawLine (ctx, fromX, fromY, toX, toY, color, lineWidth) {
@@ -177,13 +168,18 @@ export class Chart extends React.Component {
         ctx.stroke();
     }
 
+    componentDidMount() {
+        this.points = this.props.points;
+        this.points && this.updateCanvas();
+    }
+
     componentWillUnmount () {
         // unSubscribe for socket events
         socket.off(`${this.props.name}_updated`);
         socket.off(`${this.props.name}_offline`);
     }
 
-    render () {        
+    render () {     
         return <div className="chart-container">
             <canvas ref="canvas" />
         </div>;

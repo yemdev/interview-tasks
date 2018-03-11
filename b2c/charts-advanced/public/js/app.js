@@ -11,10 +11,8 @@ class App extends React.Component {
         super();
 
         this.stations = [];
-        this.timer = null;
 
         this.state = {
-            reInit: 0,
             inited: false,
             clientKey: null,
             stationsKeys: []
@@ -44,7 +42,7 @@ class App extends React.Component {
             station.filterEnabled = true;
             station.visible = true;
             station.online = true;
-
+            station.clientKey = data.clientKey;
         });
         
         return {
@@ -67,19 +65,11 @@ class App extends React.Component {
             clientKey: data.clientKey,
             stationsKeys: stationsKeys
         });
-
-        this.initTimer();
     }
 
     reInitClient () {
         this.destroyClient();
         this.initClient();
-    }
-
-    initTimer () {
-        this.timer = setInterval(() => {
-            this.requestStationUpdates();
-        }, 100);
     }
 
     destroyClient () {
@@ -88,27 +78,6 @@ class App extends React.Component {
             clientKey: null,
             stationsKeys: [] 
         });
-
-        this.timer = clearInterval(this.timer);
-    }
-
-    requestStationUpdates () {
-        this.state.stationsKeys.forEach(key => socket.send({
-            event: 'request_for_updates', 
-            data: {
-                clientKey: this.state.clientKey, 
-                stationName: key, 
-                time: this.stations[key].time
-            }
-        }));
-    }
-
-    onDataUpdated (data) {
-        let station = this.stations[data.stationName];
-            
-        station.time = data.time;
-        station.points.splice(0, data.delta.length);
-        station.points = station.points.concat(data.delta);
     }
 
     render () {
