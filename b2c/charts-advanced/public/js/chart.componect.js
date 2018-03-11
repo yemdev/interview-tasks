@@ -25,7 +25,7 @@ export class Chart extends React.Component {
 
     onOffline (data) {
         this.online = false;
-        this.updateCanvas();//debugger;
+        this.updateCanvas();
     }
 
     componentDidMount() {
@@ -47,10 +47,13 @@ export class Chart extends React.Component {
 
     updateCanvas() {
 
+        let canvas = this.refs.canvas;
+        if (!canvas) {
+            return;
+        }
+
         let points = this.points;
 
-        let canvas = this.refs.canvas;
-        
         // Set canvas width and height
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
@@ -172,6 +175,12 @@ export class Chart extends React.Component {
         ctx.lineTo(toX, toY);
 
         ctx.stroke();
+    }
+
+    componentWillUnmount () {
+        // unSubscribe for socket events
+        socket.off(`${this.props.name}_updated`);
+        socket.off(`${this.props.name}_offline`);
     }
 
     render () {        

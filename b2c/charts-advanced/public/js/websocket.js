@@ -11,14 +11,17 @@ function send (data) {
     socket.send(JSON.stringify(data));
 }
 
-function on (eventName, handler = () => {}) {    
-    if (!subscribers[eventName]) {
-        subscribers[eventName] = {
-            triggerHandler: handler
-        };
-    } else {
-        throw 'Handler name already exists please use another one.';
+function on (eventName, handler = () => {}) {
+
+    subscribers[eventName] && this.off(eventName);
+
+    subscribers[eventName] = {
+        triggerHandler: handler
     }
+}
+
+function off (eventName) {
+    subscribers[eventName] && (subscribers[eventName] = undefined);
 }
 
 socket.onmessage = event => {
@@ -38,4 +41,4 @@ socket.onmessage = event => {
     }
 };
 
-export { send, on };
+export { send, on, off };

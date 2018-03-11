@@ -3,6 +3,7 @@ import { socket } from './websocket.js';
 
 /* Stations */
 export class Stations extends React.Component {
+    
     render () {        
         return <div className="stations">
             {this.props.stationsKeys.map((key, index) => {

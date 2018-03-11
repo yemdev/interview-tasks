@@ -11,8 +11,10 @@ class App extends React.Component {
         super();
 
         this.stations = [];
+        this.timer = null;
 
         this.state = {
+            reInit: 0,
             inited: false,
             clientKey: null,
             stationsKeys: []
@@ -69,10 +71,25 @@ class App extends React.Component {
         this.initTimer();
     }
 
+    reInitClient () {
+        this.destroyClient();
+        this.initClient();
+    }
+
     initTimer () {
-        setInterval(() => {
+        this.timer = setInterval(() => {
             this.requestStationUpdates();
-        }, 1000);
+        }, 100);
+    }
+
+    destroyClient () {
+        this.setState({ 
+            inited: false,
+            clientKey: null,
+            stationsKeys: [] 
+        });
+
+        this.timer = clearInterval(this.timer);
     }
 
     requestStationUpdates () {
@@ -109,7 +126,7 @@ class App extends React.Component {
                 <div className="toolbar">
                     <Search />
                     <Filter />
-                    <Refresh onRefresh={this.initClient.bind(this)} />
+                    <Refresh onRefresh={this.reInitClient.bind(this)} />
                 </div>
             
                 {/* Stations */}
