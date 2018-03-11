@@ -9,6 +9,7 @@ export class Chart extends React.Component {
         this.points = [];
         this.online = true;
         this.time = props.time;
+        this.serieColor = this.getRndColor();
         
         // Subscribe for socket events
         socket.on(`${props.name}_updated`, this.onDataUpdated.bind(this));
@@ -146,7 +147,7 @@ export class Chart extends React.Component {
                 stepLine.toY = yMid - point;
                 stepLine.toX = stepLine.fromX + xStepLength;
                 
-                this.drawLine(ctx, stepLine.fromX, stepLine.fromY, stepLine.toX, stepLine.toY, 'red', 0.7);
+                this.drawLine(ctx, stepLine.fromX, stepLine.fromY, stepLine.toX, stepLine.toY, this.serieColor, 0.7);
                 
                 // Increase Step
                 stepLine.fromX += xStepLength;
@@ -155,6 +156,15 @@ export class Chart extends React.Component {
         }
 
         this.requestUpdate();
+    }
+
+    getRndNum (min = 0, max = 1) {
+        return Math.floor(Math.random() * (max+1)) + min;
+    }
+
+    getRndColor () {
+        let colors = ['#607d8b', '#795548', '#9e9e9e', '#ff9800', '#4caf50', '#009688', '#00bcd4', '#03a9f4', '#673ab7', '#3f51b5', '#2196f3', '#9c27b0', '#e91e63', '#f44336'];
+        return colors[this.getRndNum(0, colors.length-1)];
     }
 
     drawLine (ctx, fromX, fromY, toX, toY, color, lineWidth) {

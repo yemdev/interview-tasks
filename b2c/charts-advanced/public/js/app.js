@@ -21,15 +21,6 @@ class App extends React.Component {
         this.initClient();
     }
 
-    getRndNum (min = 0, max = 1) {
-        return Math.floor(Math.random() * (max+1)) + min;
-    }
-
-    getRndColor () {
-        let colors = ['#607d8b', '#795548', '#9e9e9e', '#ff9800', '#4caf50', '#009688', '#00bcd4', '#03a9f4', '#673ab7', '#3f51b5', '#2196f3', '#9c27b0', '#e91e63', '#f44336'];
-        return colors[this.getRndNum(0, colors.length-1)];
-    }
-
     preprocess (data) {
         let stationsKeys = Object.keys(data.stations);
 
@@ -37,7 +28,6 @@ class App extends React.Component {
             let station = data.stations[key];
 
             station.name = key;
-            station.serieColor = this.getRndColor();
             station.time = data.time;
             station.filterEnabled = true;
             station.visible = true;
