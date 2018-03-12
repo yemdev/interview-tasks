@@ -16,7 +16,8 @@ class App extends React.Component {
             inited: false,
             clientKey: null,
             stationsKeys: [],
-            search: ''
+            search: '',
+            filter: ''
         };
 
         this.initClient();
@@ -54,7 +55,8 @@ class App extends React.Component {
         this.setState({
             inited: true,
             clientKey: data.clientKey,
-            stationsKeys: stationsKeys
+            stationsKeys: stationsKeys,
+            filter: stationsKeys.join(',')
         });
     }
 
@@ -76,20 +78,47 @@ class App extends React.Component {
         this.setState({search: searchTerm});
     }
 
+    onStationToggle (name, value) {
+        let filter = this.state.filter.split(',');
+
+        // On
+        if (value) {
+            !filter.includes(name) && filter.push(name);
+        }
+
+        // Off
+        else {
+            filter.forEach((itemName, i, arr) => itemName === name && arr.splice(i, 1));
+        }
+
+        this.setState({ filter: filter.join(',') });
+    }
+
     render () {
         
         // Loading... view
-        if (!this.state.inited) { // @TODO - FINISH IT
+        if (!this.state.inited) { // @TODO - ALIGN IT
             return <div>Loading...</div>
         }
 
         // App view
         else {
 
-            let stationsKeys = !!this.state.search ? this.state.stationsKeys.filter(key => {
-                let match = this.state.search != '' ? !!key.toLowerCase().match(this.state.search.toLowerCase()) : true;
-                return match;
-            }) : this.state.stationsKeys;
+            let filter = this.state.filter.split(',');
+
+            let stationsKeys = this.state.stationsKeys.filter(i => {
+                let res = true;
+
+                // off filter
+                if (!filter.includes(i)) res = false;
+
+                // Search filter
+                if (!!this.state.search) {
+                    res = this.state.search != '' ? !!key.toLowerCase().match(this.state.search.toLowerCase()) : true;
+                }
+
+                return res;
+            });
 
             let stations = stationsKeys.map(i => this.stations[i]);
 
@@ -98,7 +127,7 @@ class App extends React.Component {
                 {/* Toolbar */}
                 <div className="toolbar">
                     <Search onInpChange={this.search.bind(this)} />
-                    <Filter />
+                    <Filter stations={this.state.stationsKeys} onStationToggle={this.onStationToggle.bind(this)} />
                     <Refresh onRefresh={this.reInitClient.bind(this)} />
                 </div>
             
