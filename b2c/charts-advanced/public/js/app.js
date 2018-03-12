@@ -69,7 +69,9 @@ class App extends React.Component {
         this.setState({ 
             inited: false,
             clientKey: null,
-            stationsKeys: [] 
+            stationsKeys: [],
+            search: '',
+            filter: ''
         });
     }
 
