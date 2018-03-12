@@ -113,8 +113,8 @@ class App extends React.Component {
                 if (!filter.includes(i)) res = false;
 
                 // Search filter
-                if (!!this.state.search) {
-                    res = this.state.search != '' ? !!key.toLowerCase().match(this.state.search.toLowerCase()) : true;
+                else if (!!this.state.search) {
+                    res = this.state.search != '' ? !!i.toLowerCase().match(this.state.search.toLowerCase()) : true;
                 }
 
                 return res;
